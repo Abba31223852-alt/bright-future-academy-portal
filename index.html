@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a1628">
+<title>Bright Future Academy | Report Card Portal</title>
+<style>
+:root{--navy:#0a1628;--navy2:#0f1f38;--blue:#1e4d8c;--blue2:#2b6cb0;--accent:#3b82f6;--cyan:#22d3ee;--glass:rgba(255,255,255,.07);--border:rgba(255,255,255,.12);--text:#e8eef7;--muted:#94a3b8;--ok:#10b981;--warn:#f59e0b;--bad:#ef4444;--orange:#f97316}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--navy);color:var(--text);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+.bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.bg::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(59,130,246,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,.03) 1px,transparent 1px);background-size:40px 40px}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.4;animation:float 20s ease-in-out infinite}
+.b1{width:340px;height:340px;background:#1e40af;top:-100px;left:-80px}
+.b2{width:300px;height:300px;background:#0e7490;bottom:-80px;right:-50px;animation-delay:-7s}
+.b3{width:220px;height:220px;background:#1d4ed8;top:45%;left:55%;animation-delay:-14s}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(28px,-36px) scale(1.06)}66%{transform:translate(-22px,18px) scale(.94)}}
+.screen{display:none;position:relative;z-index:1;min-height:100vh}
+.screen.on{display:block}
+#login{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 16px;min-height:100vh}
+.card{width:100%;max-width:420px;background:var(--glass);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--border);border-radius:22px;padding:36px 26px;box-shadow:0 30px 60px -15px rgba(0,0,0,.55);animation:up .55s ease}
+@keyframes up{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+.crest{width:72px;height:72px;margin:0 auto 14px;background:linear-gradient(135deg,var(--accent),var(--cyan));border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#fff;box-shadow:0 0 0 0 rgba(59,130,246,.5);animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(59,130,246,.45)}50%{box-shadow:0 0 0 14px rgba(59,130,246,0)}}
+.sname{text-align:center;font-size:1.4rem;font-weight:800;letter-spacing:-.3px}
+.stag{text-align:center;font-size:.82rem;color:var(--muted);margin-top:4px}
+.sloc{text-align:center;font-size:.75rem;color:var(--cyan);margin-top:2px;margin-bottom:26px}
+.tabs{display:flex;gap:6px;margin-bottom:22px;background:rgba(0,0,0,.28);padding:5px;border-radius:14px}
+.tab{flex:1;padding:11px 4px;text-align:center;font-size:.78rem;font-weight:700;border-radius:10px;border:none;background:0;color:var(--muted);cursor:pointer;transition:.25s}
+.tab.on{background:linear-gradient(135deg,var(--blue2),var(--accent));color:#fff;box-shadow:0 4px 14px rgba(59,130,246,.4)}
+.fg{margin-bottom:16px}
+.fg label{display:block;font-size:.72rem;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px}
+.fg input{width:100%;padding:15px 16px;background:rgba(0,0,0,.32);border:1.5px solid var(--border);border-radius:12px;color:#fff;font-size:1rem;outline:0;transition:.25s}
+.fg input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.28)}
+.fg input.err{border-color:var(--bad);box-shadow:0 0 0 3px rgba(239,68,68,.28);animation:shake .4s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+.emsg{color:var(--bad);font-size:.8rem;margin-top:8px;text-align:center;min-height:20px;opacity:0;transition:.3s}
+.emsg.show{opacity:1}
+.btn{width:100%;padding:16px;margin-top:10px;background:linear-gradient(135deg,var(--blue2),var(--accent));border:none;border-radius:12px;color:#fff;font-size:1rem;font-weight:800;cursor:pointer;position:relative;overflow:hidden;box-shadow:0 8px 22px rgba(59,130,246,.38);transition:.2s}
+.btn::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);transition:left .5s}
+.btn:hover::after{left:120%}
+.btn:active{transform:scale(.97)}
+.foot{text-align:center;margin-top:18px;font-size:.72rem;color:var(--muted)}
+#load{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;z-index:1;position:relative}
+#load.on{display:flex}
+.spin{width:50px;height:50px;border:3px solid rgba(255,255,255,.12);border-top-color:var(--cyan);border-radius:50%;animation:sp .75s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.lt{margin-top:16px;color:var(--muted);font-size:.9rem}
+.top{background:rgba(10,22,40,.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.tl{display:flex;align-items:center;gap:10px}
+.tlogo{width:38px;height:38px;background:linear-gradient(135deg,var(--accent),var(--cyan));border-radius:11px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff}
+.tt{font-size:.88rem;font-weight:700}
+.ts{font-size:.66rem;color:var(--muted)}
+.chip{display:flex;align-items:center;gap:8px;background:var(--glass);border:1px solid var(--border);border-radius:24px;padding:5px 12px 5px 5px;font-size:.8rem;font-weight:600}
+.av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;color:#fff;animation:bob 3s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.xbtn{background:0;border:none;color:var(--muted);cursor:pointer;font-size:.85rem;margin-left:4px}
+.wrap{padding:20px 16px 48px;max-width:680px;margin:0 auto}
+.greet{margin-bottom:18px;animation:up .5s ease}
+.greet h1{font-size:1.35rem;font-weight:800}
+.greet p{color:var(--muted);font-size:.85rem;margin-top:4px}
+.badges{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.pill{padding:5px 12px;border-radius:20px;font-size:.72rem;font-weight:700;background:rgba(59,130,246,.2);color:#93c5fd;border:1px solid rgba(59,130,246,.3)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+.sc{background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px;animation:up .5s ease backwards}
+.sc:nth-child(1){animation-delay:.05s}.sc:nth-child(2){animation-delay:.1s}.sc:nth-child(3){animation-delay:.15s}.sc:nth-child(4){animation-delay:.2s}
+.sl{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.sv{font-size:1.45rem;font-weight:800;margin-top:4px}
+.gA{color:var(--ok)}.gB{color:#60a5fa}.gC{color:var(--warn)}.gD{color:var(--orange)}.gE,.gF{color:var(--bad)}
+.ic{background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:18px;animation:up .5s ease .25s backwards;display:flex;gap:14px;align-items:center}
+.bigav{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:800;color:#fff;flex-shrink:0;animation:bob 3s ease-in-out infinite}
+.ic h3{font-size:.95rem;font-weight:700}
+.ic .meta{font-size:.78rem;color:var(--muted);margin-top:2px}
+.tc{background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:18px;animation:up .5s ease .3s backwards}
+.tc h3{font-size:.78rem;text-transform:uppercase;letter-spacing:.5px;color:var(--cyan);margin-bottom:14px}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:.68rem;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);padding:8px 4px;border-bottom:1px solid var(--border)}
+td{padding:12px 4px;font-size:.88rem;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+.barwrap{display:flex;align-items:center;gap:8px}
+.bar{flex:1;height:6px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;min-width:50px}
+.fill{height:100%;border-radius:4px;width:0;transition:width 1s ease .4s}
+.badge{display:inline-block;padding:3px 11px;border-radius:20px;font-size:.74rem;font-weight:800}
+.bA{background:rgba(16,185,129,.2);color:var(--ok)}.bB{background:rgba(59,130,246,.2);color:#60a5fa}.bC{background:rgba(245,158,11,.2);color:var(--warn)}.bD{background:rgba(249,115,22,.2);color:var(--orange)}.bE,.bF{background:rgba(239,68,68,.2);color:var(--bad)}
+.sm{background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:18px;animation:up .5s ease .35s backwards}
+.sm h3{font-size:.78rem;text-transform:uppercase;letter-spacing:.5px;color:var(--cyan);margin-bottom:12px}
+.row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.88rem}
+.row:last-child{border-bottom:none}
+.rl{color:var(--muted)}.rv{font-weight:700}
+.rm{background:linear-gradient(135deg,rgba(245,158,11,.12),rgba(249,115,22,.08));border:1px solid rgba(245,158,11,.3);border-radius:16px;padding:18px;margin-bottom:18px;animation:up .5s ease .4s backwards;box-shadow:0 0 24px rgba(245,158,11,.08)}
+.rm h3{font-size:.78rem;text-transform:uppercase;letter-spacing:.5px;color:var(--warn);margin-bottom:10px}
+.rt{font-size:.95rem;line-height:1.55;font-style:italic}
+.acts{display:flex;gap:10px;margin-bottom:22px;animation:up .5s ease .45s backwards}
+.bp{flex:1;padding:15px;background:linear-gradient(135deg,var(--blue2),var(--accent));border:none;border-radius:12px;color:#fff;font-weight:800;font-size:.9rem;cursor:pointer;position:relative;overflow:hidden;box-shadow:0 6px 18px rgba(59,130,246,.32)}
+.bp::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);transition:left .5s}
+.bp:hover::after{left:120%}
+.bs{flex:1;padding:15px;background:var(--glass);border:1px solid var(--border);border-radius:12px;color:var(--text);font-weight:700;font-size:.9rem;cursor:pointer}
+.bp:active,.bs:active{transform:scale(.97)}
+.nt{display:flex;gap:6px;margin-bottom:18px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ntb{padding:8px 14px;border-radius:20px;border:1px solid var(--border);background:0;color:var(--muted);font-size:.76rem;font-weight:700;white-space:nowrap;cursor:pointer;transition:.2s}
+.ntb.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.pn{display:none}.pn.on{display:block}
+.ex{background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:14px}
+.ex h3{font-size:.9rem;font-weight:700;margin-bottom:10px}
+.ex p,.ex li{font-size:.85rem;color:var(--muted);line-height:1.55}
+.ex ul{padding-left:18px;margin-top:6px}.ex li{margin-bottom:4px}
+@media print{.bg,.top,.acts,.nt,.ex,.xbtn{display:none!important}body{background:#fff;color:#111}.wrap{max-width:100%;padding:0}.sc,.ic,.tc,.sm,.rm{background:#fff;border:1px solid #ddd;box-shadow:none;break-inside:avoid}.sv,.rv,td,th,.greet h1{color:#111}.greet p,.rl,.meta{color:#555}.badge{border:1px solid #ccc}.fill{background:#3b82f6!important}}
+@media(min-width:520px){.grid{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+<div class="bg"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
+<div id="login" class="screen on">
+<div class="card">
+<div class="crest">BF</div>
+<div class="sname">Bright Future Academy</div>
+<div class="stag">Excellence in Education</div>
+<div class="sloc">Maiduguri, Borno State, Nigeria</div>
+<div class="tabs">
+<button class="tab on" data-s="Primary" onclick="sel(this)">Primary</button>
+<button class="tab" data-s="Secondary" onclick="sel(this)">Secondary</button>
+<button class="tab" data-s="Afternoon" onclick="sel(this)">Afternoon</button>
+</div>
+<div class="fg"><label>Admission Number</label><input type="text" id="adm" placeholder="e.g. PRI/2025/001" autocomplete="off" autocapitalize="characters"></div>
+<div class="fg"><label>Secret PIN (4 digits)</label><input type="password" id="pin" placeholder="••••" maxlength="4" inputmode="numeric" pattern="[0-9]*"></div>
+<div class="emsg" id="err">Invalid credentials. Please try again.</div>
+<button class="btn" onclick="login()">View Report Card</button>
+<div class="foot">First Term 2025/2026 · Secure Parent Portal</div>
+</div>
+</div>
+
+<div id="load"><div class="spin"></div><div class="lt">Loading report card…</div></div>
+
+<div id="dash" class="screen">
+<div class="top">
+<div class="tl"><div class="tlogo">BF</div><div><div class="tt">Bright Future Academy</div><div class="ts">Report Card Portal</div></div></div>
+<div class="chip"><div class="av" id="navAv">?</div><span id="navName">Student</span><button class="xbtn" onclick="out()" title="Sign out">⏻</button></div>
+</div>
+<div class="wrap">
+<div class="greet"><h1 id="gName">Welcome</h1><p id="gSub">First Term 2025/2026</p><div class="badges" id="gBadges"></div></div>
+<div class="nt">
+<button class="ntb on" onclick="panel('report',this)">Report Card</button>
+<button class="ntb" onclick="panel('profile',this)">Profile</button>
+<button class="ntb" onclick="panel('past',this)">Past Terms</button>
+<button class="ntb" onclick="panel('help',this)">Help / FAQ</button>
+</div>
+
+<div id="p-report" class="pn on">
+<div class="grid" id="stats"></div>
+<div class="ic" id="info"></div>
+<div class="tc"><h3>Subject Performance</h3><table><thead><tr><th>Subject</th><th>Score</th><th>Grade</th></tr></thead><tbody id="subs"></tbody></table></div>
+<div class="sm" id="sum"></div>
+<div class="rm"><h3>Teacher's Remark</h3><div class="rt" id="rmk"></div></div>
+<div class="acts"><button class="bp" onclick="window.print()">🖨 Print / Save PDF</button><button class="bs" onclick="out()">Sign Out</button></div>
+</div>
+
+<div id="p-profile" class="pn"><div class="ex" id="prof"></div></div>
+<div id="p-past" class="pn"><div class="ex"><h3>📅 Past Terms</h3><p>Previous term results will appear here once published by the school.</p><ul><li>Third Term 2024/2025 — Not yet available</li><li>Second Term 2024/2025 — Not yet available</li></ul><p style="margin-top:12px;font-size:.8rem">Contact the school office for archived results.</p></div></div>
+<div id="p-help" class="pn"><div class="ex"><h3>❓ Help & FAQ</h3>
+<p><strong>How do I log in?</strong><br>Use your child's Admission Number and the 4-digit Secret PIN given by the school.</p>
+<p style="margin-top:10px"><strong>Forgot PIN?</strong><br>Visit the school office or contact the class teacher to reset it.</p>
+<p style="margin-top:10px"><strong>How do I print?</strong><br>Tap “Print / Save PDF”, then choose Save as PDF or your printer.</p>
+<p style="margin-top:10px"><strong>Grading Scale</strong></p>
+<ul><li>A: 75 – 100</li><li>B: 65 – 74</li><li>C: 55 – 64</li><li>D: 45 – 54</li><li>E: 40 – 44</li><li>F: Below 40</li></ul>
+<p style="margin-top:12px">Bright Future Academy · Maiduguri, Borno State<br>For support: contact the school admin office.</p>
+</div></div>
+</div>
+</div>
+
+<script>
+const DB={
+"PRI/2025/001":{pin:"1234",sec:"Primary",name:"Musa Ibrahim",cls:"Primary 4B",pos:"3rd of 45",subs:[{n:"English",s:78},{n:"Mathematics",s:85},{n:"Basic Science",s:72},{n:"Social Studies",s:80},{n:"Civic Education",s:88},{n:"Hausa",s:75}],rmk:"Excellent work. Keep it up."},
+"PRI/2025/002":{pin:"5678",sec:"Primary",name:"Aisha Bello",cls:"Primary 5A",pos:"1st of 48",subs:[{n:"English",s:92},{n:"Mathematics",s:88},{n:"Basic Science",s:90},{n:"Social Studies",s:86},{n:"Civic Education",s:84},{n:"Hausa",s:89}],rmk:"Outstanding performance. Well done!"},
+"SEC/2025/101":{pin:"2345",sec:"Secondary",name:"Ibrahim Yakubu",cls:"JSS 2A",pos:"7th of 52",subs:[{n:"English",s:68},{n:"Mathematics",s:74},{n:"Basic Science",s:70},{n:"Basic Technology",s:65},{n:"Business Studies",s:72},{n:"Civic Education",s:76},{n:"Computer Studies",s:80}],rmk:"Good progress. Focus more on English."},
+"SEC/2025/102":{pin:"6789",sec:"Secondary",name:"Fatima Ali",cls:"SSS 2B",pos:"2nd of 40",subs:[{n:"English",s:82},{n:"Mathematics",s:78},{n:"Biology",s:88},{n:"Chemistry",s:84},{n:"Physics",s:76},{n:"Further Maths",s:72},{n:"Civic Education",s:86}],rmk:"Excellent result. Science subjects are strong."},
+"AFT/2025/201":{pin:"3456",sec:"Afternoon",name:"Zainab Usman",cls:"Afternoon Primary 3",pos:"4th of 30",subs:[{n:"English",s:72},{n:"Mathematics",s:68},{n:"Basic Science",s:75},{n:"Hausa",s:80}],rmk:"Good effort. Keep practicing maths."},
+"AFT/2025/202":{pin:"7890",sec:"Afternoon",name:"Sani Mohammed",cls:"Afternoon Primary 4",pos:"8th of 28",subs:[{n:"English",s:65},{n:"Mathematics",s:70},{n:"Basic Science",s:68},{n:"Hausa",s:74}],rmk:"Fair result. More effort needed in English."}
+};
+let sec="Primary",cur=null;
+function sel(b){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));b.classList.add('on');sec=b.dataset.s}
+function gr(s){if(s>=75)return'A';if(s>=65)return'B';if(s>=55)return'C';if(s>=45)return'D';if(s>=40)return'E';return'F'}
+function col(g){return({A:'#10b981',B:'#60a5fa',C:'#f59e0b',D:'#f97316',E:'#ef4444',F:'#ef4444'})[g]}
+function stats(subs){const t=subs.reduce((a,x)=>a+x.s,0),a=t/subs.length;return{t,a:a.toFixed(1),o:gr(a),c:subs.length}}
+function login(){
+const a=document.getElementById('adm').value.trim().toUpperCase();
+const p=document.getElementById('pin').value.trim();
+const e=document.getElementById('err'),ai=document.getElementById('adm'),pi=document.getElementById('pin');
+ai.classList.remove('err');pi.classList.remove('err');e.classList.remove('show');
+if(!a||!p){if(!a)ai.classList.add('err');if(!p)pi.classList.add('err');e.textContent='Please fill in all fields.';e.classList.add('show');return}
+const st=DB[a];
+if(!st||st.pin!==p||st.sec!==sec){ai.classList.add('err');pi.classList.add('err');e.textContent='Invalid Admission Number or PIN for this section.';e.classList.add('show');return}
+cur={adm:a,...st};
+document.getElementById('login').classList.remove('on');
+document.getElementById('load').classList.add('on');
+setTimeout(()=>{document.getElementById('load').classList.remove('on');render();document.getElementById('dash').classList.add('on')},1100)
+}
+function render(){
+const s=cur,st=stats(s.subs),fn=s.name.split(' ')[0],ini=s.name.split(' ').map(w=>w[0]).join('').slice(0,2);
+document.getElementById('gName').textContent='Good day, '+fn;
+document.getElementById('gSub').textContent=s.cls+' · First Term 2025/2026';
+document.getElementById('gBadges').innerHTML='<span class="pill">'+s.sec+'</span><span class="pill">'+s.cls+'</span><span class="pill">'+s.pos+'</span>';
+document.getElementById('navName').textContent=fn;
+document.getElementById('navAv').textContent=ini;
+document.getElementById('stats').innerHTML=`<div class="sc"><div class="sl">Overall Grade</div><div class="sv g${st.o}">${st.o}</div></div><div class="sc"><div class="sl">Average</div><div class="sv">${st.a}%</div></div><div class="sc"><div class="sl">Position</div><div class="sv" style="font-size:1.15rem">${s.pos.split(' of')[0]}</div></div><div class="sc"><div class="sl">Subjects</div><div class="sv">${st.c}</div></div>`;
+document.getElementById('info').innerHTML=`<div class="bigav">${ini}</div><div><h3>${s.name}</h3><div class="meta">${s.adm} · ${s.cls}</div><div class="meta" style="margin-top:2px">${s.sec} Section · First Term 2025/2026</div></div>`;
+document.getElementById('subs').innerHTML=s.subs.map(x=>{const g=gr(x.s);return`<tr><td>${x.n}</td><td><div class="barwrap"><strong>${x.s}</strong><div class="bar"><div class="fill" style="background:${col(g)}" data-w="${x.s}%"></div></div></div></td><td><span class="badge b${g}">${g}</span></td></tr>`}).join('');
+requestAnimationFrame(()=>document.querySelectorAll('.fill').forEach(f=>f.style.width=f.dataset.w));
+document.getElementById('sum').innerHTML=`<h3>Summary</h3><div class="row"><span class="rl">Total Score</span><span class="rv">${st.t}</span></div><div class="row"><span class="rl">Average</span><span class="rv">${st.a}%</span></div><div class="row"><span class="rl">Overall Grade</span><span class="rv"><span class="badge b${st.o}">${st.o}</span></span></div><div class="row"><span class="rl">Class Position</span><span class="rv">${s.pos}</span></div>`;
+document.getElementById('rmk').textContent='"'+s.rmk+'"';
+document.getElementById('prof').innerHTML=`<h3>👤 Student Profile</h3><div class="row"><span class="rl">Full Name</span><span class="rv">${s.name}</span></div><div class="row"><span class="rl">Admission Number</span><span class="rv">${s.adm}</span></div><div class="row"><span class="rl">Class</span><span class="rv">${s.cls}</span></div><div class="row"><span class="rl">Section</span><span class="rv">${s.sec}</span></div><div class="row"><span class="rl">School</span><span class="rv">Bright Future Academy</span></div><div class="row"><span class="rl">Location</span><span class="rv">Maiduguri, Borno State</span></div><div class="row"><span class="rl">Current Term</span><span class="rv">First Term 2025/2026</span></div>`
+}
+function panel(id,b){document.querySelectorAll('.pn').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.ntb').forEach(t=>t.classList.remove('on'));document.getElementById('p-'+id).classList.add('on');b.classList.add('on')}
+function out(){cur=null;document.getElementById('dash').classList.remove('on');document.getElementById('login').classList.add('on');document.getElementById('adm').value='';document.getElementById('pin').value='';document.getElementById('err').classList.remove('show');document.querySelectorAll('.pn').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.ntb').forEach(t=>t.classList.remove('on'));document.getElementById('p-report').classList.add('on');document.querySelector('.ntb').classList.add('on')}
+document.getElementById('pin').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
+document.getElementById('adm').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('pin').focus()});
+</script>
+</body>
+</html>
